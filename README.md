@@ -62,7 +62,7 @@ Follow these steps to get the Dice Dance component running locally:
 
     urlpatterns = [
         path('admin/', admin.site.urls),
-        path('dice/', include('dice.urls', namespace='Dice')), # Updated app name to lowercase 'dice'
+        path('', include('dice.urls', namespace='Dice')), # Updated app name to lowercase 'dice'
         # Add other project URLs here
     ]
     ```
