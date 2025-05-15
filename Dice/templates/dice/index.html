@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dicey Dance</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background-color: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0;
+    }
+
+    .card {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .card-header-flex {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+
+    .card h2 {
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #111;
+      margin-bottom: 5px;
+    }
+
+    .card-header-flex > h2 {
+        margin-bottom: 0;
+    }
+
+    .card p {
+      margin: 8px 0 20px;
+      color: #555;
+      line-height: 1.4;
+    }
+
+    .clear-btn {
+      background-color: transparent;
+      color: #777;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s ease, background-color 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .clear-btn:hover {
+      color: #e74c3c;
+      background-color: #fdf0ef;
+    }
+
+    .clear-btn:focus-visible {
+      outline: 2px solid #e74c3c;
+      outline-offset: 1px;
+    }
+
+    .toggle-buttons {
+      display: flex;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .toggle-buttons button {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      background-color: #f8f8f8;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+      font-size: 1rem;
+    }
+
+    .toggle-buttons button:hover {
+      background-color: #e9e9e9;
+    }
+
+    .toggle-buttons button:focus-visible {
+        outline: 2px solid #22c55e;
+        outline-offset: -2px;
+        z-index: 1;
+        position: relative;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .form-group select,
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    .form-group select:focus-visible,
+    .form-group input:focus-visible {
+        outline: 2px solid #22c55e;
+        outline-offset: 1px;
+        border-color: #bbb;
+    }
+
+    .roll-btn {
+        width: 100%;
+        background-color: #22c55e;
+        color: white;
+        padding: 12px;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .roll-btn:hover {
+        background-color: #16a34a;
+      }
+
+      .roll-btn:focus-visible {
+        outline: 3px solid #16a34a;
+        outline-offset: 2px;
+      }
+
+    /* Style for the container holding the latest results and history */
+    #resultsAndHistoryContainer {
+        margin-top: 25px; 
+        border-top: 2px solid #eee; 
+        padding-top: 20px; 
+    }
+
+
+    #resultsContainer {
+      margin-bottom: 20px; /* Space between latest roll and history */
+    }
+
+    #resultsContainer h2 {
+        font-size: 1.2rem; 
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    #diceResults {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    #diceResults span {
+      padding: 8px 12px;
+      background: #f2f2f2;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      min-width: 38px;
+      text-align: center;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #totalResult {
+      font-weight: bold;
+      margin-top: 10px;
+      font-size: 1.05rem;
+      color: #333;
+    }
+
+    /* CSS for the history section */
+    #historyContainer h2 {
+        font-size: 1.2rem; 
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    #historyContainer ul {
+        list-style: none; 
+        padding: 0;
+        margin: 0;
+        max-height: 150px; 
+        overflow-y: auto;
+        border: 1px solid #eee;
+        border-radius: 6px;
+        background-color: #fcfcfc;
+    }
+
+    #historyContainer li {
+        padding: 10px 12px;
+        border-bottom: 1px solid #eee; /* Separator between history items */
+        font-size: 0.95rem;
+        color: #555;
+    }
+
+     #historyContainer li:last-child {
+         border-bottom: none; 
+     }
+
+     #historyContainer li strong {
+         color: #333; 
+     }
+
+     
+
+     /* Style for the clear history button below the history list */
+     #clearHistoryForm {
+         margin-top: 15px; 
+         text-align: right; /
+     }
+
+
+    @media (max-width: 480px) {
+      body {
+          align-items: flex-start;
+          padding-top: 20px;
+      }
+
+      .card {
+        padding: 20px;
+        width: 95%;
+      }
+
+      .card h2 {
+        font-size: 1.3rem;
+        gap: 8px;
+      }
+
+       .card p {
+          font-size: 0.95rem;
+          margin-bottom: 15px;
+        }
+
+       .toggle-buttons button,
+       .roll-btn {
+            padding: 11px;
+            font-size: 0.9rem;
+        }
+
+       .form-group label {
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+         .form-group select,
+         .form-group input {
+            padding: 9px;
+            font-size: 0.9rem;
+         }
+
+         #diceResults span {
+            padding: 6px 10px;
+            font-size: 0.95rem;
+            min-width: 32px;
+         }
+
+          #totalResult {
+               font-size: 1rem;
+           }
+
+           #resultsAndHistoryContainer {
+               margin-top: 20px;
+               padding-top: 15px;
+           }
+
+           #resultsContainer h2,
+           #historyContainer h2 {
+               font-size: 1.1rem;
+           }
+
+           #historyContainer li {
+               padding: 8px 10px;
+               font-size: 0.9rem;
+           }
+
+           #clearHistoryForm {
+               margin-top: 10px;
+           }
+    }
+  </style>
+</head>
+<body data-current-mode="{{ current_mode_name|default:'single' }}" data-num-sides="{{ num_sides_value|default:'6' }}"> {# Added data-num-sides attribute #}
+  <div class="card">
+    <div class="card-header-flex">
+      <h2>🎲 Dice Dance</h2>
+      <form method="POST" action="{% url 'Dice:clear_dice_history' %}" style="display: inline-block;">
+          {% csrf_token %} 
+          <button type="submit" class="clear-btn">🗑️ Clear history</button>
+      </form>
+    </div>
+
+    <p>Roll single or multiple dice.</p>
+
+    <form method="POST">
+      {% csrf_token %} 
+      <div class="toggle-buttons">
+        <button type="submit" name="mode" value="single" id="singleDieBtn">Single Die</button>
+        <button type="submit" name="mode" value="multiple" id="multipleDiceBtn">Multiple Dice</button>
+      </div>
+
+      <div class="form-group" id="numDiceGroup">
+        <label for="numDice">Number of Dice</label>
+        <input type="number" id="numDice" name="num_dice" value="{{ num_dice_value|default:1 }}" min="1" />
+      </div>
+
+      <div class="form-group">
+        <label for="numSides">Number of Sides</label>
+        <select id="numSides" name="num_sides">
+          <option value="6" {% if num_sides_value == 6 %}selected{% endif %}>D6</option>
+          <option value="8" {% if num_sides_value == 8 %}selected{% endif %}>D8</option>
+          <option value="10" {% if num_sides_value == 10 %}selected{% endif %}>D10</option>
+          <option value="12" {% if num_sides_value == 12 %}selected{% endif %}>D12</option>
+          <option value="20" {% if num_sides_value == 20 %}selected{% endif %}>D20</option>
+        </select>
+      </div>
+
+      <button class="roll-btn" type="submit">Roll Dice</button>
+    </form>
+
+    
+    <div id="resultsAndHistoryContainer">
+
+        {% if current_roll_results %}
+            <div id="resultsContainer">
+                <h2>Latest Roll:</h2>
+                <div id="diceResults">
+                    {% for value in current_roll_results %}
+                        <span>{{ value }}</span>
+                    {% endfor %}
+                </div>
+                <p id="totalResult">
+                    Total: <strong>{{ current_roll_total }}</strong>
+                </p>
+            </div>
+        {% endif %}
+        
+        <!--
+        {# Display the roll history - only if there are historical rolls #}
+        {% if roll_history %}
+            <div id="historyContainer">
+                <h2>Roll History:</h2>
+                <ul>
+                    {# Loop through each roll entry in the roll_history list #}
+                    {% for roll in roll_history %}
+                        <li>
+                            Rolled {{ roll.num_dice }} D{{ roll.num_sides }}: {{ roll.results|join:", " }} (Total: <strong>{{ roll.total }}</strong>)
+                        </li>
+                    {% endfor %}
+                </ul>
+                {# The Clear History button form is placed separately, below the history list #}
+                {# It's already defined above in the card-header-flex, but you could also place it here #}
+                {# if you prefer it directly below the history list. Let's keep it in the header for now #}
+                {# but ensure its style makes sense there. If you want it below, move the form here. #}
+
+                {# If you want the clear button here, uncomment the form below and remove the one in card-header-flex #}
+                 <form method="POST" action="{% url 'Dice:clear_dice_history' %}" id="clearHistoryForm">
+                    {% csrf_token %}
+                    <button type="submit" class="clear-btn">🗑️ Clear history</button>
+                {# </form> #}
+
+            </div>
+        {% endif %}
+      -->
+
+    </div> 
+
+  </div> 
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const singleDieButton = document.getElementById('singleDieBtn');
+      const multipleDiceButton = document.getElementById('multipleDiceBtn');
+      const numDiceGroup = document.getElementById('numDiceGroup');
+      const numDiceInput = document.getElementById('numDice');
+      const numSidesSelect = document.getElementById('numSides'); 
+
+      // Function to show/hide the 'Number of Dice' input group
+      function setNumDiceGroupVisibility(isMultipleMode) {
+        if (numDiceGroup && numDiceInput) {
+          if (isMultipleMode) {
+            numDiceGroup.style.display = 'block'; 
+            numDiceInput.disabled = false;
+          } else {
+            numDiceGroup.style.display = 'none';
+            numDiceInput.disabled = true;
+          }
+        }
+      }
+
+      // Default to 'single' if the attribute is not present or empty
+      const bodyElement = document.body;
+      const initialMode = bodyElement.dataset.currentMode || 'single';
+      setNumDiceGroupVisibility(initialMode === 'multiple');
+
+
+      const initialNumSides = bodyElement.dataset.numSides; // Reading the data attribute
+      if (numSidesSelect && initialNumSides) {
+  
+          const matchingOption = Array.from(numSidesSelect.options).find(
+              option => parseInt(option.value) === parseInt(initialNumSides)
+          );
+          if (matchingOption) {
+              numSidesSelect.value = initialNumSides;
+          }
+      }
+
+
+      // Event listener for the "Single Die" button
+      if (singleDieButton) {
+        singleDieButton.addEventListener('click', function() {
+          setNumDiceGroupVisibility(false);
+        });
+      }
+
+      // Event listener for the "Multiple Dice" button
+      if (multipleDiceButton) {
+        multipleDiceButton.addEventListener('click', function() {
+          setNumDiceGroupVisibility(true);
+        });
+      }
+
+    });
+  </script>
+</body>
+</html>
