@@ -26,7 +26,20 @@ SECRET_KEY = 'django-insecure-&4x#7k-sbmxkhl=u268b(lbx5htj$99nf=^!em2j29e%-5xs7(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['dice-simulator.up.railway.app']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://dice-simulator.up.railway.app',
+]
+
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
+
+
 
 
 # Application definition
